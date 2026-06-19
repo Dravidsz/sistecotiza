@@ -101,7 +101,21 @@ export default {
       this.isGenerating = true
       
       try {
-        const element = this.$refs.quotationRef
+        const original = this.$refs.quotationRef
+        const clone = original.cloneNode(true)
+        
+        clone.querySelectorAll('input, textarea').forEach(el => {
+          const div = document.createElement('div')
+          div.textContent = el.value || ''
+          div.style.cssText = 'border: none; padding: 4px; white-space: pre-wrap; word-break: break-word; min-height: 20px;'
+          el.parentNode.replaceChild(div, el)
+        })
+        
+        clone.style.position = 'absolute'
+        clone.style.left = '-9999px'
+        clone.style.top = '0'
+        clone.style.width = getComputedStyle(original).width
+        document.body.appendChild(clone)
         
         const opt = {
           margin: [10, 10, 10, 10],
@@ -110,7 +124,9 @@ export default {
           html2canvas: { 
             scale: 2,
             useCORS: true,
-            letterRendering: true
+            letterRendering: true,
+            width: clone.scrollWidth,
+            height: clone.scrollHeight
           },
           jsPDF: { 
             unit: 'mm', 
@@ -119,7 +135,8 @@ export default {
           }
         }
         
-        await html2pdf().set(opt).from(element).save()
+        await html2pdf().set(opt).from(clone).save()
+        document.body.removeChild(clone)
       } catch (error) {
         console.error('Error al generar PDF:', error)
         alert('Hubo un error al generar el PDF. Por favor intente de nuevo.')

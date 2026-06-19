@@ -212,7 +212,8 @@ body {
   border-bottom: none;
 }
 
-.products-table input {
+.products-table input,
+.products-table textarea {
   width: 100%;
   padding: var(--spacing-sm);
   border: 1px solid var(--gray-300);
@@ -222,7 +223,8 @@ body {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.products-table input:focus {
+.products-table input:focus,
+.products-table textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(43, 124, 206, 0.15);
@@ -230,6 +232,12 @@ body {
 
 .products-table input[type="number"] {
   text-align: right;
+}
+
+.products-table textarea {
+  resize: vertical;
+  overflow: hidden;
+  min-height: 38px;
 }
 
 .col-quantity {
@@ -457,14 +465,23 @@ body {
     display: none !important;
   }
   
-  .products-table input {
+  .products-table input,
+  .products-table textarea {
     border: none;
     padding: 0;
+  }
+  
+  .products-table textarea {
+    overflow: visible;
+    height: auto !important;
+    resize: none;
   }
   
   .notes-section textarea {
     border: none;
     resize: none;
+    overflow: visible;
+    height: auto !important;
   }
 }
 

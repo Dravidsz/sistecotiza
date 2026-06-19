@@ -28,12 +28,12 @@
             />
           </td>
           <td class="col-description">
-            <input 
-              type="text" 
+            <textarea
               :value="product.description"
-              @input="updateProduct(index, 'description', $event.target.value)"
+              @input="updateProduct(index, 'description', $event.target.value); autoResize($event)"
               placeholder="Descripción del producto o servicio"
-            />
+              rows="1"
+            ></textarea>
           </td>
           <td class="col-price">
             <input 
@@ -90,7 +90,20 @@ export default {
     }
   },
   emits: ['update:products'],
+  mounted() {
+    this.$nextTick(() => {
+      this.$el.querySelectorAll('.col-description textarea').forEach(ta => {
+        ta.style.height = 'auto'
+        ta.style.height = ta.scrollHeight + 'px'
+      })
+    })
+  },
   methods: {
+    autoResize(event) {
+      const textarea = event.target
+      textarea.style.height = 'auto'
+      textarea.style.height = textarea.scrollHeight + 'px'
+    },
     updateProduct(index, field, value) {
       const updatedProducts = [...this.products]
       if (field === 'quantity' || field === 'price') {
