@@ -17,6 +17,7 @@
       <QuotationFooter 
         :subtotal="subtotal"
         :total="total"
+        :terms="terms"
         :notes="notes"
         @update:notes="notes = $event"
       />
@@ -65,7 +66,8 @@ export default {
           price: 0
         }
       ],
-      notes: 'Precios válidos por 15 días.\nDisponibilidad sujeta a confirmación.\nTiempo de entrega: 3-5 días hábiles.\nPedidos USA: 10 a 15 días hábiles.\nSe requiere abono del 50% para iniciar el pedido.\nTodas las piezas tienen 1 mes de garantía.\nPiezas eléctricas: solo 24 horas para reclamos después de la entrega.',
+      notes: '',
+      terms: 'Precios válidos por 15 días.\nDisponibilidad sujeta a confirmación.\nTiempo de entrega: 3-5 días hábiles.\nPedidos USA: 10 a 15 días hábiles.\nSe requiere abono del 50% para iniciar el pedido.\nTodas las piezas tienen 1 mes de garantía.\nPiezas eléctricas: solo 24 horas para reclamos después de la entrega.',
       isGenerating: false
     }
   },

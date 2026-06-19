@@ -351,8 +351,8 @@ body {
 }
 
 .notes-section textarea {
-  flex: 1;
-  min-height: 100px;
+  width: 100%;
+  min-height: 80px;
   padding: var(--spacing-md);
   border: 1px solid var(--gray-300);
   border-radius: var(--border-radius);
@@ -365,6 +365,42 @@ body {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(43, 124, 206, 0.15);
+}
+
+.terms-display {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.terms-label {
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: var(--spacing-sm);
+  display: block;
+}
+
+.terms-text {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.terms-text p {
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  line-height: 1.7;
+  padding-left: var(--spacing-md);
+  position: relative;
+}
+
+.terms-text p::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
 }
 
 .totals-section {
@@ -482,6 +518,15 @@ body {
     resize: none;
     overflow: visible;
     height: auto !important;
+  }
+  
+  .terms-text {
+    border: none;
+    padding: 0;
+  }
+  
+  .terms-text p::before {
+    color: var(--gray-600);
   }
 }
 
