@@ -7,7 +7,7 @@
           id="notes"
           :value="notes"
           @input="$emit('update:notes', $event.target.value)"
-          placeholder="Escriba aquí las condiciones, términos de pago, garantías u observaciones adicionales..."
+          placeholder="Términos y condiciones comerciales, formas de pago, garantías, observaciones..."
         ></textarea>
       </div>
       
