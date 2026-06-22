@@ -175,7 +175,7 @@ export default {
         } else {
           productsWithData.forEach((product, index) => {
             const subtotal = (product.quantity || 0) * (product.price || 0)
-            const descLines = doc.splitTextToSize(product.description || '-', 100)
+            const descLines = doc.splitTextToSize((product.description || '-').toUpperCase(), 100)
             const rowHeight = Math.max(10, descLines.length * 5 + 6)
             
             if (y + rowHeight > pageHeight - 60) {
