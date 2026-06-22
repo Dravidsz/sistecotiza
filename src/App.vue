@@ -18,8 +18,6 @@
         :subtotal="subtotal"
         :total="total"
         :terms="terms"
-        :notes="notes"
-        @update:notes="notes = $event"
       />
     </div>
     
@@ -44,7 +42,7 @@
 import QuotationHeader from './components/QuotationHeader.vue'
 import ProductTable from './components/ProductTable.vue'
 import QuotationFooter from './components/QuotationFooter.vue'
-import html2pdf from 'html2pdf.js'
+import { jsPDF } from 'jspdf'
 
 export default {
   name: 'App',
@@ -66,7 +64,6 @@ export default {
           price: 0
         }
       ],
-      notes: '',
       terms: 'Precios válidos por 15 días.\nDisponibilidad sujeta a confirmación.\nTiempo de entrega: 3-5 días hábiles.\nPedidos USA: 10 a 15 días hábiles.\nSe requiere abono del 50% para iniciar el pedido.\nTodas las piezas tienen 1 mes de garantía.\nPiezas eléctricas: solo 24 horas para reclamos después de la entrega.',
       isGenerating: false
     }
@@ -103,41 +100,172 @@ export default {
       this.isGenerating = true
       
       try {
-        const element = this.$refs.quotationRef
-        
-        const textareas = element.querySelectorAll('textarea')
-        textareas.forEach(ta => {
-          ta.style.height = 'auto'
-          ta.style.height = ta.scrollHeight + 'px'
+        const doc = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
         })
         
-        const opt = {
-          margin: [10, 10, 10, 10],
-          filename: `Cotizacion-${this.quotationNumber}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            letterRendering: true
-          },
-          jsPDF: { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait' 
+        const pageWidth = doc.internal.pageSize.getWidth()
+        const pageHeight = doc.internal.pageSize.getHeight()
+        const margin = 15
+        const contentWidth = pageWidth - (margin * 2)
+        let y = margin
+        
+        doc.setFont('helvetica')
+        doc.setTextColor(30, 41, 59)
+        
+        doc.setFillColor(26, 58, 92)
+        doc.rect(0, 0, pageWidth, 45, 'F')
+        
+        try {
+          const logoImg = document.querySelector('.logo-img')
+          if (logoImg && logoImg.src) {
+            doc.addImage(logoImg.src, 'PNG', margin, 8, 28, 28)
           }
+        } catch (e) {
+          console.log('Logo no encontrado')
         }
         
-        await html2pdf().set(opt).from(element).save()
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(18)
+        doc.setFont('helvetica', 'bold')
+        doc.text('COTIZACIÓN', pageWidth - margin, 18, { align: 'right' })
         
-        textareas.forEach(ta => {
-          ta.style.height = ''
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'normal')
+        doc.text(`#${this.quotationNumber}`, pageWidth - margin, 28, { align: 'right' })
+        
+        doc.setFontSize(9)
+        doc.text(`F. Emisión: ${this.formatDate(this.issueDate)}`, pageWidth - margin, 36, { align: 'right' })
+        doc.text(`Válido hasta: ${this.formatDate(this.expirationDate)}`, pageWidth - margin, 42, { align: 'right' })
+        
+        y = 55
+        
+        doc.setTextColor(30, 41, 59)
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'bold')
+        doc.text('PRODUCTOS / SERVICIOS', margin, y)
+        
+        y += 8
+        
+        doc.setFillColor(26, 58, 92)
+        doc.rect(margin, y, contentWidth, 8, 'F')
+        
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(8)
+        doc.setFont('helvetica', 'bold')
+        doc.text('CANT.', margin + 3, y + 5.5)
+        doc.text('DESCRIPCIÓN', margin + 25, y + 5.5)
+        doc.text('PRECIO', pageWidth - margin - 38, y + 5.5)
+        doc.text('SUBTOTAL', pageWidth - margin - 3, y + 5.5, { align: 'right' })
+        
+        y += 8
+        
+        doc.setTextColor(30, 41, 59)
+        doc.setFont('helvetica', 'normal')
+        
+        const productsWithData = this.products.filter(p => p.description || p.price > 0)
+        
+        if (productsWithData.length === 0) {
+          doc.setFontSize(10)
+          doc.setTextColor(100, 100, 100)
+          doc.text('Sin productos agregados', margin, y + 10)
+          y += 20
+        } else {
+          productsWithData.forEach((product, index) => {
+            const subtotal = (product.quantity || 0) * (product.price || 0)
+            const descLines = doc.splitTextToSize(product.description || '-', 100)
+            const rowHeight = Math.max(10, descLines.length * 5 + 6)
+            
+            if (y + rowHeight > pageHeight - 60) {
+              doc.addPage()
+              y = margin
+            }
+            
+            doc.setFillColor(245, 245, 245)
+            if (index % 2 === 0) {
+              doc.rect(margin, y, contentWidth, rowHeight, 'F')
+            }
+            
+            doc.setFontSize(9)
+            doc.setTextColor(30, 41, 59)
+            doc.text(String(product.quantity || 0), margin + 3, y + 5)
+            
+            doc.setFontSize(9)
+            let descY = y + 5
+            descLines.forEach(line => {
+              doc.text(line, margin + 25, descY)
+              descY += 5
+            })
+            
+            doc.text(`$${this.formatNumber(product.price || 0)}`, pageWidth - margin - 38, y + 5)
+            doc.text(`$${this.formatNumber(subtotal)}`, pageWidth - margin - 3, y + 5, { align: 'right' })
+            
+            y += rowHeight
+          })
+        }
+        
+        y += 5
+        
+        doc.setDrawColor(200, 200, 200)
+        doc.line(margin, y, pageWidth - margin, y)
+        y += 5
+        
+        doc.setFillColor(245, 245, 245)
+        doc.rect(pageWidth - margin - 60, y, 60, 20, 'F')
+        
+        doc.setFontSize(10)
+        doc.setTextColor(100, 100, 100)
+        doc.text('Subtotal:', pageWidth - margin - 55, y + 7)
+        doc.setTextColor(30, 41, 59)
+        doc.text(`$${this.formatNumber(this.subtotal)}`, pageWidth - margin - 3, y + 7, { align: 'right' })
+        
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Total USD:', pageWidth - margin - 55, y + 15)
+        doc.text(`$${this.formatNumber(this.total)}`, pageWidth - margin - 3, y + 15, { align: 'right' })
+        
+        y += 28
+        
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(30, 41, 59)
+        doc.text('TÉRMINOS Y CONDICIONES', margin, y)
+        y += 6
+        
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(8)
+        doc.setTextColor(80, 80, 80)
+        
+        const termsLines = this.terms.split('\n').filter(l => l.trim())
+        termsLines.forEach(line => {
+          if (y > pageHeight - 20) {
+            doc.addPage()
+            y = margin
+          }
+          doc.text('• ' + line, margin, y)
+          y += 4
         })
+        
+        doc.save(`Cotizacion-${this.quotationNumber}.pdf`)
+        
       } catch (error) {
         console.error('Error al generar PDF:', error)
-        alert('Hubo un error al generar el PDF. Por favor intente de nuevo.')
+        alert('Hubo un error al generar el PDF.')
       } finally {
         this.isGenerating = false
       }
+    },
+    
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const date = new Date(dateStr + 'T00:00:00')
+      return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' })
+    },
+    
+    formatNumber(value) {
+      return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }

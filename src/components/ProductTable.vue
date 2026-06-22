@@ -18,7 +18,7 @@
           :key="product.id"
           class="product-row"
         >
-          <td class="col-quantity">
+          <td class="col-quantity" data-label="Cantidad">
             <input 
               type="number" 
               min="1"
@@ -27,15 +27,17 @@
               placeholder="0"
             />
           </td>
-          <td class="col-description">
+          <td class="col-description" data-label="Descripción">
             <textarea
+              :ref="'desc_' + index"
               :value="product.description"
               @input="updateProduct(index, 'description', $event.target.value); autoResize($event)"
+              @keydown.enter.prevent="handleEnter(index)"
               placeholder="Descripción del producto o servicio"
               rows="1"
             ></textarea>
           </td>
-          <td class="col-price">
+          <td class="col-price" data-label="Precio">
             <input 
               type="number" 
               min="0"
@@ -45,12 +47,12 @@
               placeholder="0.00"
             />
           </td>
-          <td class="col-subtotal">
+          <td class="col-subtotal" data-label="Subtotal">
             <span class="subtotal-value">
               ${{ formatNumber(calculateSubtotal(product)) }}
             </span>
           </td>
-          <td class="col-actions">
+          <td class="col-actions" data-label="">
             <button 
               v-if="products.length > 1"
               class="btn btn-danger" 
@@ -90,12 +92,26 @@ export default {
     }
   },
   emits: ['update:products'],
+  
+  watch: {
+    products: {
+      handler() {
+        this.$nextTick(() => {
+          this.resizeAllTextareas()
+        })
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.$nextTick(() => {
-      this.$el.querySelectorAll('.col-description textarea').forEach(ta => {
-        ta.style.height = 'auto'
-        ta.style.height = ta.scrollHeight + 'px'
-      })
+      this.resizeAllTextareas()
+    })
+  },
+  
+  updated() {
+    this.$nextTick(() => {
+      this.resizeAllTextareas()
     })
   },
   methods: {
@@ -103,6 +119,13 @@ export default {
       const textarea = event.target
       textarea.style.height = 'auto'
       textarea.style.height = textarea.scrollHeight + 'px'
+    },
+    
+    resizeAllTextareas() {
+      this.$el.querySelectorAll('.col-description textarea').forEach(ta => {
+        ta.style.height = 'auto'
+        ta.style.height = ta.scrollHeight + 'px'
+      })
     },
     updateProduct(index, field, value) {
       const updatedProducts = [...this.products]
@@ -135,6 +158,20 @@ export default {
     
     formatNumber(value) {
       return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    
+    handleEnter(index) {
+      if (index === this.products.length - 1) {
+        this.addProduct()
+      }
+      this.$nextTick(() => {
+        const nextDesc = this.$refs['desc_' + (index + 1)]
+        if (nextDesc && nextDesc.length) {
+          nextDesc[0].focus()
+        } else if (nextDesc) {
+          nextDesc.focus()
+        }
+      })
     }
   }
 }

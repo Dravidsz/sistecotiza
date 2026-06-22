@@ -63,6 +63,8 @@ body {
   color: #000;
   line-height: 1.5;
   font-size: 14px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 #app {
@@ -83,81 +85,64 @@ body {
 .quotation-header {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
   color: var(--white);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
 }
 
 .header-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-lg);
-  flex-wrap: wrap;
+  gap: var(--spacing-md);
 }
 
-.logo-section {
-  flex: 1;
-  min-width: 200px;
-}
-
-.logo-section img {
-  max-width: 150px;
-  height: auto;
+.logo-img {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  aspect-ratio: 1 / 1;
   object-fit: cover;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  flex-shrink: 0;
 }
 
-.quotation-info {
-  text-align: right;
+.header-info {
   flex: 1;
-  min-width: 250px;
-}
-
-.quotation-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: var(--spacing-sm);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  min-width: 0;
 }
 
 .quotation-number {
   font-size: 1rem;
-  font-weight: 500;
-  color: var(--primary-bright);
-  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: var(--spacing-xs);
 }
 
-.dates-container {
+.dates-row {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
-.date-field {
+.date-item {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
 
-.date-field label {
-  font-size: 0.875rem;
+.date-label {
+  font-size: 0.75rem;
   color: var(--gray-300);
+  white-space: nowrap;
 }
 
-.date-field input {
+.date-item input {
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: var(--border-radius);
   background: rgba(255,255,255,0.1);
   color: var(--white);
   font-family: var(--font-family);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }
 
-.date-field input:focus {
+.date-item input:focus {
   outline: none;
   border-color: var(--primary-bright);
   background: rgba(255,255,255,0.2);
@@ -225,6 +210,8 @@ body {
   font-family: var(--font-family);
   font-size: 0.95rem;
   transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .products-table input:focus,
@@ -242,6 +229,7 @@ body {
   resize: vertical;
   overflow: hidden;
   min-height: 38px;
+  color: #1e293b;
 }
 
 .col-quantity {
@@ -250,6 +238,12 @@ body {
 
 .col-description {
   width: auto;
+  color: #1e293b;
+}
+
+.col-description textarea,
+.col-description p {
+  color: #1e293b !important;
 }
 
 .col-price {
@@ -288,6 +282,8 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 .btn-primary {
@@ -328,6 +324,8 @@ body {
 
 .btn-add {
   margin-top: var(--spacing-sm);
+  width: 100%;
+  min-height: 48px;
 }
 
 /* Footer - Totales y Notas */
@@ -452,36 +450,199 @@ body {
   border-top: 1px solid var(--gray-200);
 }
 
-/* Responsive */
+/* Responsive Mobile */
 @media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+  
   #app {
     padding: var(--spacing-sm);
   }
   
+  .quotation-header {
+    padding: var(--spacing-sm);
+  }
+  
   .header-content {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .logo-img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .quotation-number {
+    font-size: 0.9rem;
+  }
+  
+  .dates-row {
     flex-direction: column;
-    text-align: center;
+    gap: var(--spacing-xs);
   }
   
-  .quotation-info {
-    text-align: center;
+  .date-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
   }
   
-  .date-field {
-    justify-content: center;
+  .date-label {
+    font-size: 0.7rem;
+  }
+  
+  .date-item input {
+    flex: 1;
+    min-width: 0;
+    padding: var(--spacing-xs);
+    font-size: 14px;
+  }
+  
+  .products-section {
+    padding: var(--spacing-md);
+  }
+  
+  .section-title {
+    font-size: 1rem;
+  }
+  
+  .products-table {
+    display: block;
+    font-size: 0.85rem;
+  }
+  
+  .products-table thead {
+    display: none;
+  }
+  
+  .products-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .products-table tr {
+    display: grid;
+    grid-template-columns: 80px 1fr 110px;
+    grid-template-rows: auto auto auto;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-200);
+  }
+  
+  .products-table td {
+    padding: var(--spacing-xs);
+    border: none;
+  }
+  
+  .products-table td:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  .products-table td:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  
+  .products-table td:nth-child(3) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  
+  .products-table td:nth-child(4) {
+    grid-column: 2 / 4;
+    grid-row: 2;
+  }
+  
+  .products-table td:last-child {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+  }
+  
+  .products-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-xs);
+    display: block;
+  }
+  
+  .col-quantity,
+  .col-description,
+  .col-price,
+  .col-subtotal,
+  .col-actions {
+    width: auto;
+  }
+  
+  .products-table input,
+  .products-table textarea {
+    font-size: 16px;
+    padding: var(--spacing-sm);
+  }
+  
+  .btn-danger {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .quotation-footer {
+    padding: var(--spacing-md);
   }
   
   .footer-content {
     grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
   
-  .products-table {
+  .totals-section {
+    padding: var(--spacing-md);
+    background: var(--white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-200);
+  }
+  
+  .terms-display {
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+  }
+  
+  .terms-text {
+    padding: var(--spacing-sm);
+  }
+  
+  .terms-text p {
     font-size: 0.85rem;
   }
   
-  .products-table th,
-  .products-table td {
-    padding: var(--spacing-xs);
+  .actions-section {
+    padding: var(--spacing-md);
+  }
+  
+  .btn-success {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-table tr {
+    grid-template-columns: 70px 1fr 100px;
+  }
+  
+  .quotation-title {
+    font-size: 1rem;
   }
 }
 
@@ -509,12 +670,15 @@ body {
   .products-table textarea {
     border: none;
     padding: 0;
+    color: #1e293b !important;
+    -webkit-text-fill-color: #1e293b !important;
   }
   
   .products-table textarea {
     overflow: visible;
     height: auto !important;
     resize: none;
+    color: #1e293b !important;
   }
   
   .notes-section textarea {

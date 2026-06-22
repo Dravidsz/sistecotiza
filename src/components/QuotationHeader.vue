@@ -1,23 +1,20 @@
 <template>
   <header class="quotation-header">
     <div class="header-content">
-      <div class="logo-section">
-        <img :src="logoSrc" alt="Top Rare Parts Logo" />
-      </div>
-      <div class="quotation-info">
-        <h1 class="quotation-title">Cotización</h1>
-        <div class="quotation-number">#{{ quotationNumber }}</div>
-        <div class="dates-container">
-          <div class="date-field">
-            <label>Fecha de emisión:</label>
+      <img :src="logoSrc" alt="Top Rare Parts Logo" class="logo-img" />
+      <div class="header-info">
+        <div class="quotation-number">{{ quotationNumber }}</div>
+        <div class="dates-row">
+          <div class="date-item">
+            <span class="date-label">F. Emisión:</span>
             <input 
               type="date" 
               :value="issueDate" 
               @input="$emit('update:issueDate', $event.target.value)"
             />
           </div>
-          <div class="date-field">
-            <label>Válido hasta:</label>
+          <div class="date-item">
+            <span class="date-label">Válido hasta:</span>
             <input 
               type="date" 
               :value="expirationDate" 

@@ -8,13 +8,7 @@
             <p v-for="(line, i) in termsLines" :key="i">{{ line }}</p>
           </div>
         </div>
-        <label for="notes">Notas Adicionales</label>
-        <textarea 
-          id="notes"
-          :value="notes"
-          @input="$emit('update:notes', $event.target.value)"
-          placeholder="Notas adicionales (opcional)..."
-        ></textarea>
+
       </div>
       
       <div class="totals-section">
@@ -46,13 +40,8 @@ export default {
     terms: {
       type: String,
       default: ''
-    },
-    notes: {
-      type: String,
-      default: ''
     }
   },
-  emits: ['update:notes'],
   computed: {
     termsLines() {
       return this.terms.split('\n').filter(l => l.trim())
