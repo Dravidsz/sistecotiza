@@ -61,7 +61,8 @@ export default {
           id: 1,
           quantity: 1,
           description: '',
-          price: 0
+          price: 0,
+          priceInput: ''
         }
       ],
       terms: 'Precios válidos por 15 días.\nDisponibilidad sujeta a confirmación.\nTiempo de entrega: 3-5 días hábiles.\nPedidos USA: 10 a 15 días hábiles.\nSe requiere abono del 50% para iniciar el pedido.\nTodas las piezas tienen 1 mes de garantía.\nPiezas eléctricas: solo 24 horas para reclamos después de la entrega.',

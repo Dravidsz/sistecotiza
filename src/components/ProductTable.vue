@@ -42,7 +42,7 @@
               type="text"
               inputmode="decimal"
               class="price-input"
-              :value="product.price"
+              :value="product.priceInput"
               @input="handlePriceInput(index, $event)"
               @blur="handlePriceBlur(index, $event)"
               placeholder="0.00"
@@ -146,11 +146,24 @@ export default {
       if (sanitized !== raw) {
         event.target.value = sanitized
       }
-      this.updateProduct(index, 'price', this.parseMoney(sanitized))
+      // Guardar el texto tal como se escribe (priceInput) para que el
+      // re-render no lo pise (p. ej. "5." -> "5"), y el número (price)
+      // para los cálculos
+      const updatedProducts = [...this.products]
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        priceInput: sanitized,
+        price: this.parseMoney(sanitized)
+      }
+      this.$emit('update:products', updatedProducts)
     },
 
     handlePriceBlur(index, event) {
-      event.target.value = (this.products[index].price || 0).toFixed(2)
+      const formatted = (this.products[index].price || 0).toFixed(2)
+      event.target.value = formatted
+      const updatedProducts = [...this.products]
+      updatedProducts[index] = { ...updatedProducts[index], priceInput: formatted }
+      this.$emit('update:products', updatedProducts)
     },
 
     parseMoney(value) {
@@ -163,7 +176,8 @@ export default {
         id: Date.now(),
         quantity: 1,
         description: '',
-        price: 0
+        price: 0,
+        priceInput: ''
       }
       this.$emit('update:products', [...this.products, newProduct])
     },
