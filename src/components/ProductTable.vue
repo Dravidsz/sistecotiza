@@ -39,11 +39,12 @@
           </td>
           <td class="col-price" data-label="Precio">
             <input 
-              type="number" 
-              min="0"
-              step="0.01"
+              type="text"
+              inputmode="decimal"
+              class="price-input"
               :value="product.price"
-              @input="updateProduct(index, 'price', $event.target.value)"
+              @input="handlePriceInput(index, $event)"
+              @blur="handlePriceBlur(index, $event)"
               placeholder="0.00"
             />
           </td>
@@ -128,13 +129,33 @@ export default {
       })
     },
     updateProduct(index, field, value) {
+      const parsed = field === 'quantity' ? (parseFloat(value) || 0) : value
       const updatedProducts = [...this.products]
-      if (field === 'quantity' || field === 'price') {
-        updatedProducts[index][field] = parseFloat(value) || 0
-      } else {
-        updatedProducts[index][field] = value
-      }
+      updatedProducts[index] = { ...updatedProducts[index], [field]: parsed }
       this.$emit('update:products', updatedProducts)
+    },
+
+    handlePriceInput(index, event) {
+      const raw = event.target.value
+      // Permitir solo dígitos y un único separador decimal (punto o coma)
+      let sanitized = raw.replace(/[^\d.,]/g, '')
+      const sepIndex = sanitized.search(/[.,]/)
+      if (sepIndex !== -1) {
+        sanitized = sanitized.slice(0, sepIndex + 1) + sanitized.slice(sepIndex + 1).replace(/[.,]/g, '')
+      }
+      if (sanitized !== raw) {
+        event.target.value = sanitized
+      }
+      this.updateProduct(index, 'price', this.parseMoney(sanitized))
+    },
+
+    handlePriceBlur(index, event) {
+      event.target.value = (this.products[index].price || 0).toFixed(2)
+    },
+
+    parseMoney(value) {
+      const number = parseFloat(String(value).replace(',', '.'))
+      return isNaN(number) ? 0 : number
     },
     
     addProduct() {
