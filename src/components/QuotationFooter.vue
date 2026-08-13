@@ -16,6 +16,10 @@
           <span class="total-label">Subtotal:</span>
           <span class="total-value">${{ formatNumber(subtotal) }}</span>
         </div>
+        <div class="total-row">
+          <span class="total-label">ITBMS (7%):</span>
+          <span class="total-value">${{ formatNumber(tax) }}</span>
+        </div>
         <div class="total-row grand-total">
           <span class="total-label">Total USD:</span>
           <span class="total-value">${{ formatNumber(total) }}</span>
@@ -30,6 +34,10 @@ export default {
   name: 'QuotationFooter',
   props: {
     subtotal: {
+      type: Number,
+      required: true
+    },
+    tax: {
       type: Number,
       required: true
     },

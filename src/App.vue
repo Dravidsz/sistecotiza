@@ -16,6 +16,7 @@
       
       <QuotationFooter 
         :subtotal="subtotal"
+        :tax="tax"
         :total="total"
         :terms="terms"
       />
@@ -75,8 +76,11 @@ export default {
         return sum + (product.quantity || 0) * (product.price || 0)
       }, 0)
     },
+    tax() {
+      return this.subtotal * 0.07
+    },
     total() {
-      return this.subtotal
+      return this.subtotal + this.tax
     }
   },
   methods: {
@@ -214,20 +218,27 @@ export default {
         y += 5
         
         doc.setFillColor(245, 245, 245)
-        doc.rect(pageWidth - margin - 60, y, 60, 20, 'F')
+        doc.rect(pageWidth - margin - 60, y, 60, 26, 'F')
         
         doc.setFontSize(10)
         doc.setTextColor(100, 100, 100)
-        doc.text('Subtotal:', pageWidth - margin - 55, y + 7)
+        doc.text('Subtotal:', pageWidth - margin - 55, y + 6)
         doc.setTextColor(30, 41, 59)
-        doc.text(`$${this.formatNumber(this.subtotal)}`, pageWidth - margin - 3, y + 7, { align: 'right' })
+        doc.text(`$${this.formatNumber(this.subtotal)}`, pageWidth - margin - 3, y + 6, { align: 'right' })
+        
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(100, 100, 100)
+        doc.text('ITBMS (7%):', pageWidth - margin - 55, y + 13)
+        doc.setTextColor(30, 41, 59)
+        doc.text(`$${this.formatNumber(this.tax)}`, pageWidth - margin - 3, y + 13, { align: 'right' })
         
         doc.setFontSize(12)
         doc.setFont('helvetica', 'bold')
-        doc.text('Total USD:', pageWidth - margin - 55, y + 15)
-        doc.text(`$${this.formatNumber(this.total)}`, pageWidth - margin - 3, y + 15, { align: 'right' })
+        doc.text('Total USD:', pageWidth - margin - 55, y + 21)
+        doc.text(`$${this.formatNumber(this.total)}`, pageWidth - margin - 3, y + 21, { align: 'right' })
         
-        y += 28
+        y += 34
         
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
