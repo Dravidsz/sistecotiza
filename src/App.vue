@@ -66,7 +66,7 @@ export default {
           priceInput: ''
         }
       ],
-      terms: 'Precios válidos por 15 días.\nDisponibilidad sujeta a confirmación.\nTiempo de entrega: 3-5 días hábiles.\nPedidos USA: 10 a 15 días hábiles.\nSe requiere abono del 50% para iniciar el pedido.\nTodas las piezas tienen 1 mes de garantía.\nPiezas eléctricas: solo 24 horas para reclamos después de la entrega.',
+      terms: 'Precios válidos por 15 días.\nDisponibilidad sujeta a confirmación.\nTiempo de entrega: 3-5 días hábiles.\nPedidos USA: 10 a 15 días hábiles.\nSe requiere abono del 50% para iniciar el pedido.\nGarantía de piezas no eléctricas: 1 mes desde la emisión de la factura.\nGarantía de piezas eléctricas: 7 días desde la emisión de la factura.',
       isGenerating: false
     }
   },
